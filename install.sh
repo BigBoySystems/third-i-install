@@ -9,7 +9,6 @@ mount -o remount,rw /
 # we want to make sure all of these services are stopped
 # not sure why dnsmasq is enabled... I think it's a leftover
 systemctl disable dnsmasq
-#systemctl disable wpa_supplicant
 # this is the webapp hosted on port 80
 systemctl disable nginx
 # this is the fastcgi process for the php scripts (only used by the webapp)
@@ -46,7 +45,6 @@ systemctl enable dhcpcd@eth0
 # disable a few background processes we don't need
 perl -p -i -e 's!^(?=
 	./scripts/wlan-switch.php |
-	./skybox-server.js |
 	./scripts/loop-mpegts-skybox.sh
 )!#!mx' /opt/StereoPi/run.sh
 
