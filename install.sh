@@ -50,25 +50,44 @@ perl -p -i -e 's!^(?=
 	./scripts/loop-mpegts-skybox.sh
 )!#!mx' /opt/StereoPi/run.sh
 
+# hijack saveconfig.php to accept arguments from command line
+perl -p -i -e
+	's/^<\?php/$&\nif (!isset(\$_SERVER["HTTP_HOST"])) {parse_str(\$argv[1], \$_POST);}/g' \
+	/var/www/html/saveconfig.php
+
 # we need extra space
 mount -t tmpfs none /var/lib/apt/lists
 
 # install pipenv
-apt-get update
-apt-get install -y --no-install-recommends python3-pip python3-dev
-/usr/bin/pip3 install -U pip
-apt-get remove -y --auto-remove python3-pip
-apt-get -q clean
-/usr/local/bin/pip install -U pipenv
-# no idea what this is but seems required with Python 3.5
-/usr/local/bin/pip install -U idna_ssl typing-extensions
+if ! which pipenv &> /dev/null; then
+	apt-get update
+	apt-get install -y --no-install-recommends python3-pip python3-dev
+	/usr/bin/pip3 install -U pip
+	apt-get remove -y --auto-remove python3-pip
+	apt-get -q clean
+	/usr/local/bin/pip install -U pipenv
+	# no idea what this is but seems required with Python 3.5
+	/usr/local/bin/pip install -U idna_ssl typing-extensions
+fi
 
 # install captive portal
-cd /tmp
-git clone https://github.com/BigBoySystems/captive-portal.git
-cd captive-portal
-./install.sh
-systemctl enable captive-portal@wlan0
+if ! which captive-portal &> /dev/null; then
+	cd /tmp
+	git clone https://github.com/BigBoySystems/captive-portal.git
+	cd captive-portal
+	./install.sh
+	systemctl enable captive-portal@wlan0
+fi
+
+# install third-i backend
+if ! which third-i-backend &> /dev/null; then
+	cd /tmp
+	ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+	git clone git@github.com:BigBoySystems/third-i-backend.git
+	cd third-i-backend
+	./install.sh
+	systemctl enable third-i-backend@wlan0
+fi
 
 sync
 reboot
