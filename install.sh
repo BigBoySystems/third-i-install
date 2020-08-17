@@ -4,6 +4,8 @@
 
 set -e -x
 
+export DEBIAN_FRONTEND=noninteractive
+
 mount -o remount,rw /
 
 # we want to make sure all of these services are stopped
@@ -47,6 +49,26 @@ perl -p -i -e 's!^(?=
 	./scripts/wlan-switch.php |
 	./scripts/loop-mpegts-skybox.sh
 )!#!mx' /opt/StereoPi/run.sh
+
+# we need extra space
+mount -t tmpfs none /var/lib/apt/lists
+
+# install pipenv
+apt-get update
+apt-get install -y --no-install-recommends python3-pip python3-dev
+/usr/bin/pip3 install -U pip
+apt-get remove -y --auto-remove python3-pip
+apt-get -q clean
+/usr/local/bin/pip install -U pipenv
+# no idea what this is but seems required with Python 3.5
+/usr/local/bin/pip install -U idna_ssl typing-extensions
+
+# install captive portal
+cd /tmp
+git clone https://github.com/BigBoySystems/captive-portal.git
+cd captive-portal
+./install.sh
+systemctl enable captive-portal@wlan0
 
 sync
 reboot
