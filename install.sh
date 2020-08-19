@@ -51,7 +51,7 @@ perl -p -i -e 's!^(?=
 )!#!mx' /opt/StereoPi/run.sh
 
 # tweak config
-perl -p -i -e 's!^(ws_enabled|audio_enabled)=0!$1=1!mx' /opt/StereoPi/run.sh
+perl -p -i -e 's!^(ws_enabled|audio_enabled|usb_enabled)=0!$1=1!mx' /opt/StereoPi/run.sh
 
 # hijack saveconfig.php to accept arguments from command line
 perl -p -i -e
