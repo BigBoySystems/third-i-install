@@ -54,7 +54,7 @@ perl -p -i -e 's!^(?=
 perl -p -i -e 's!^(ws_enabled|audio_enabled|usb_enabled)=0!$1=1!mx' /opt/StereoPi/run.sh
 
 # hijack saveconfig.php to accept arguments from command line
-perl -p -i -e
+perl -p -i -e \
 	's/^<\?php/$&\nif (!isset(\$_SERVER["HTTP_HOST"])) {parse_str(\$argv[1], \$_POST);}/g' \
 	/var/www/html/saveconfig.php
 
