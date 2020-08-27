@@ -85,6 +85,7 @@ fi
 # install third-i backend
 if ! which third-i-backend &> /dev/null; then
 	cd /tmp
+	mkdir -p ~/.ssh
 	ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 	git clone git@github.com:BigBoySystems/third-i-backend.git
 	cd third-i-backend
