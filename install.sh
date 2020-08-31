@@ -1,5 +1,45 @@
-#!/bin/sh
+#!/bin/bash
 
+set -e
+
+mkdir -p src
+mkdir -p pkg
+
+# prepare installation of captive portal
+if ! [ -e pkg/captive-portal ]; then
+	(cd src && git clone git@github.com:BigBoySystems/captive-portal.git || true)
+	(
+		cd src/captive-portal && \
+		cp -Rf . ../../pkg/captive-portal && \
+		pipenv lock -r > ../../pkg/captive-portal/requirements.txt
+	)
+fi
+
+# prepare installation of third-i backend
+if ! [ -e pkg/third-i-backend ]; then
+	(cd src && git clone git@github.com:BigBoySystems/third-i-backend.git || true)
+	(
+		cd src/third-i-backend && \
+		cp -Rf . ../../pkg/third-i-backend && \
+		pipenv lock -r > ../../pkg/third-i-backend/requirements.txt
+	)
+fi
+
+# prepare installation of third-i frontend
+if ! [ -e pkg/third-i-frontend ]; then
+	(cd src && git clone git@github.com:BigBoySystems/third-i-frontend.git || true)
+	(
+		cd src/third-i-frontend && \
+		npm install && \
+		npm run build && \
+		cp -Rf build ../../pkg/third-i-frontend
+	)
+fi
+
+# copy stuff to stereopi
+scp -r pkg "$@":/tmp/
+
+ssh "$@" <<SSHEOF
 { # Prevent execution if this script was only partially downloaded
 
 set -e -x
@@ -7,6 +47,10 @@ set -e -x
 export DEBIAN_FRONTEND=noninteractive
 
 mount -o remount,rw /
+mount -o remount,rw /boot
+
+# disable mandb
+rm -f /var/lib/man-db/auto-update
 
 # we want to make sure all of these services are stopped
 # not sure why dnsmasq is enabled... I think it's a leftover
@@ -51,7 +95,8 @@ perl -p -i -e 's!^(?=
 )!#!mx' /opt/StereoPi/run.sh
 
 # tweak config
-perl -p -i -e 's!^(ws_enabled|audio_enabled|usb_enabled)=0!$1=1!mx' /opt/StereoPi/run.sh
+perl -p -i -e 's!^(ws_enabled|audio_enabled|usb_enabled)=0!\$1=1!mx' \
+	/boot/stereopi.conf
 
 # update nginx configuration
 cat - > /etc/nginx/nginx.conf <<EOF
@@ -74,9 +119,9 @@ http {
 	include mime.types;
 	default_type application/octet-stream;
 
-	#log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-	#                  '$status $body_bytes_sent "$http_referer" '
-	#                  '"$http_user_agent" "$http_x_forwarded_for"';
+	#log_format  main  '\\\$remote_addr - \\\$remote_user [\\\$time_local] "\\\$request" '
+	#                  '\\\$status \\\$body_bytes_sent "\\\$http_referer" '
+	#                  '"\\\$http_user_agent" "\\\$http_x_forwarded_for"';
 
 	#access_log logs/access.log main;
 
@@ -95,11 +140,11 @@ http {
 
 		location / {
 			root /var/www/html;
-			try_files $uri $uri/ /index.html;
+			try_files \\\$uri \\\$uri/ /index.html;
 		}
 
 		location /api {
-			rewrite ^/api/(.*)$ /$1 break;
+			rewrite ^/api/(.*)$ /\\\$1 break;
 			proxy_pass http://localhost:8000/;
 		}
 	}
@@ -187,45 +232,48 @@ chmod 600 /etc/nginx/nginx-selfsigned.key
 
 # hijack saveconfig.php to accept arguments from command line
 perl -p -i -e \
-	's/^<\?php/$&\nif (!isset(\$_SERVER["HTTP_HOST"])) {parse_str(\$argv[1], \$_POST);}/g' \
+	's/^<\?php/$&\nif (!isset(\\\$_SERVER["HTTP_HOST"])) {parse_str(\\\$argv[1], \\\$_POST);}/g' \
 	/var/www/html/saveconfig.php
 
 # we need extra space
 mount -t tmpfs none /var/lib/apt/lists
 
-# install pipenv
-if ! which pipenv &> /dev/null; then
+# install pip
+if ! which pip3 &> /dev/null; then
 	apt-get update
-	apt-get install -y --no-install-recommends python3-pip python3-dev
-	/usr/bin/pip3 install -U pip
-	apt-get remove -y --auto-remove python3-pip
+	apt-get install -y --no-install-recommends python3-pip python3-dev python3-setuptools
+	#/usr/bin/pip3 install -U pip
+	#apt-get remove -y --auto-remove python3-pip
 	apt-get -q clean
-	/usr/local/bin/pip install -U pipenv
-	# no idea what this is but seems required with Python 3.5
-	/usr/local/bin/pip install -U idna_ssl typing-extensions
 fi
 
 # install captive portal
 if ! which captive-portal &> /dev/null; then
-	cd /tmp
-	git clone https://github.com/BigBoySystems/captive-portal.git
-	cd captive-portal
-	./install.sh
+	cd /tmp/pkg/captive-portal
+	pip3 install -r requirements.txt
+	cp -fv captive-portal.py /usr/local/sbin/captive-portal
+	cp -fv captive-portal@.service /lib/systemd/system/
+	chmod 644 /lib/systemd/system/captive-portal@.service
 	systemctl enable captive-portal@wlan0
 fi
 
 # install third-i backend
 if ! which third-i-backend &> /dev/null; then
-	cd /tmp
-	mkdir -p ~/.ssh
-	ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-	git clone git@github.com:BigBoySystems/third-i-backend.git
-	cd third-i-backend
-	./install.sh
+	cd /tmp/pkg/third-i-backend
+	pip3 install -r requirements.txt
+	cp -fv third-i-backend.py /usr/local/sbin/third-i-backend
+	cp -fv third-i-backend@.service /lib/systemd/system/
+	chmod 644 /lib/systemd/system/third-i-backend@.service
 	systemctl enable third-i-backend@wlan0
+fi
+
+# install frontend
+if ! [ -e /var/www/html/index.html ]; then
+	cp -fvR /tmp/pkg/third-i-frontend/* /var/www/html/
 fi
 
 sync
 reboot
 
 } # End of wrapping
+SSHEOF
