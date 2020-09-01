@@ -143,12 +143,20 @@ http {
 
 		location / {
 			root /var/www/html;
-			try_files \\\$uri \\\$uri/ /index.html;
 		}
 
 		location /api {
 			rewrite ^/api/(.*)$ /\\\$1 break;
-			proxy_pass http://localhost:8000/;
+			proxy_pass http://localhost:8000;
+		}
+
+		location /media/ {
+			internal;
+			alias /media/;
+		}
+
+		location /files {
+			proxy_pass http://localhost:8000;
 		}
 	}
 
