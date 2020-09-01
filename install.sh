@@ -268,7 +268,6 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOF
-	cp -fv captive-portal@.service /lib/systemd/system/
 	chmod 644 /lib/systemd/system/captive-portal@.service
 	systemctl enable captive-portal@wlan0
 fi
