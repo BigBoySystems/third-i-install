@@ -252,6 +252,21 @@ if ! which captive-portal &> /dev/null; then
 	cd /tmp/pkg/captive-portal
 	pip3 install -r requirements.txt
 	cp -fv captive-portal.py /usr/local/sbin/captive-portal
+	cat - > /lib/systemd/system/captive-portal@.service <<EOF
+[Unit]
+Description=Third-I Captive Portal on %I
+Wants=network.target
+Before=network.target
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+ExecStart=/usr/local/sbin/captive-portal --unix /run/captive-portal-%I.sock %I
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
 	cp -fv captive-portal@.service /lib/systemd/system/
 	chmod 644 /lib/systemd/system/captive-portal@.service
 	systemctl enable captive-portal@wlan0
@@ -262,7 +277,20 @@ if ! which third-i-backend &> /dev/null; then
 	cd /tmp/pkg/third-i-backend
 	pip3 install -r requirements.txt
 	cp -fv third-i-backend.py /usr/local/sbin/third-i-backend
-	cp -fv third-i-backend@.service /lib/systemd/system/
+	cat - > /lib/systemd/system/third-i-backend@.service <<EOF
+[Unit]
+Description=Third-I Backend on %I
+Requires=network.target
+After=network.target captive-portal@%i.service
+
+[Service]
+ExecStart=/usr/local/sbin/third-i-backend --host 0.0.0.0 --port 8000 /run/captive-portal-%I.sock
+KillMode=process
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
 	chmod 644 /lib/systemd/system/third-i-backend@.service
 	systemctl enable third-i-backend@wlan0
 fi
