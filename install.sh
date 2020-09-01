@@ -91,12 +91,15 @@ systemctl enable dhcpcd@eth0
 # disable a few background processes we don't need
 perl -p -i -e 's!^(?=
 	./scripts/wlan-switch.php |
-	./scripts/loop-mpegts-skybox.sh
+	./scripts/loop-mpegts-skybox.sh |
+	./scripts/record-watcher.sh
 )!#!mx' /opt/StereoPi/run.sh
 
 # tweak config
-perl -p -i -e 's!^(ws_enabled|audio_enabled|usb_enabled)=0!\$1=1!mx' \
+perl -p -i -e 's!^(ws_enabled|usb_enabled)=0!\$1=1!m' \
 	/boot/stereopi.conf
+perl -p -i -e 's!^(video_width)=.*!\$1=1920!m' /boot/stereopi.conf
+perl -p -i -e 's!^(video_height)=.*!\$1=1080!m' /boot/stereopi.conf
 
 # update nginx configuration
 cat - > /etc/nginx/nginx.conf <<EOF
