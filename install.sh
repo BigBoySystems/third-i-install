@@ -292,7 +292,7 @@ Requires=network.target
 After=network.target captive-portal@%i.service
 
 [Service]
-ExecStart=/usr/local/sbin/third-i-backend --host 0.0.0.0 --port 8000 /run/captive-portal-%I.sock
+ExecStart=/usr/local/sbin/third-i-backend --host 127.0.0.1 --port 8000 /run/captive-portal-%I.sock
 KillMode=process
 Restart=always
 
