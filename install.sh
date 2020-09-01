@@ -242,8 +242,6 @@ mount -t tmpfs none /var/lib/apt/lists
 if ! which pip3 &> /dev/null; then
 	apt-get update
 	apt-get install -y --no-install-recommends python3-pip python3-dev python3-setuptools
-	#/usr/bin/pip3 install -U pip
-	#apt-get remove -y --auto-remove python3-pip
 	apt-get -q clean
 fi
 
