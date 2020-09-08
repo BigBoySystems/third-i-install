@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2020-09-08T11:22:49.555Z" agent="5.0 (X11)" etag="lAEpewVv6LwABArnllAS" version="13.6.9" type="github">
+<mxfile host="app.diagrams.net" modified="2020-09-08T15:09:09.273Z" agent="5.0 (X11)" etag="H0GD9xO_yx-zHlU5EFim" version="13.6.9" type="github">
   <diagram id="EHZb14BvgaKVWSqgQuvn" name="Page-1">
-    <mxGraphModel dx="981" dy="573" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="677" dy="396" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -113,6 +113,15 @@
           <mxGeometry width="80" relative="1" as="geometry">
             <mxPoint x="368.5" y="500" as="sourcePoint" />
             <mxPoint x="368.5" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zNTZZsJCAmpR414pE-_L-4" value="&lt;div&gt;MCU&lt;/div&gt;&lt;div&gt;LED + screen&lt;/div&gt;&lt;div&gt;+ buttons&lt;br&gt;&lt;/div&gt;" style="html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="220" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zNTZZsJCAmpR414pE-_L-5" value="serial" style="html=1;verticalAlign=bottom;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=block;startFill=1;" edge="1" parent="1" source="R91F2Yu0FQq_XXMoHAW0-2" target="zNTZZsJCAmpR414pE-_L-4">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="341" y="360" as="sourcePoint" />
+            <mxPoint x="341" y="280" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
