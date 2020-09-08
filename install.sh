@@ -101,6 +101,9 @@ perl -p -i -e 's!^(ws_enabled|usb_enabled)=0!\$1=1!m' \
 perl -p -i -e 's!^(video_width)=.*!\$1=1920!m' /boot/stereopi.conf
 perl -p -i -e 's!^(video_height)=.*!\$1=1080!m' /boot/stereopi.conf
 
+# re-activate journald logs
+perl -p -i -e 's!^#?(Storage)=.*!\$1=volatile!m' /etc/systemd/journald.conf
+
 # update nginx configuration
 cat - > /etc/nginx/nginx.conf <<EOF
 #user html;
