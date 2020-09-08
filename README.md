@@ -19,3 +19,27 @@ Run it using ssh:
 ```
 ./install.sh root@stereopi.lan
 ```
+
+Obtaining logs
+--------------
+
+1.  Logs of the captive-portal component:
+
+    ```
+    journalctl -u captive-portal@wlan0 -S today
+    ```
+
+2.  Logs of the third-i-backend component:
+
+    ```
+    journalctl -u third-i-backend@wlan0 -S today
+    ```
+
+3.  Logs of the Nginx proxy:
+
+    ```
+    tail -f /var/log/nginx/access.log
+    tail -f /var/log/nginx/error.log
+    ```
+
+![architecture-diagram](./BigBoySystem-Third-I.png)
