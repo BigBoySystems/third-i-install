@@ -142,7 +142,7 @@ http {
 	server {
 		listen 80;
 		listen [::]:80;
-		server_name stereopi.local;
+		server_name third-i.local;
 
 		location / {
 			root /var/www/html;
@@ -168,7 +168,7 @@ http {
 		listen [::]:80 default_server;
 		server_name _;
 
-		return 301 http://stereopi.local;
+		return 301 http://third-i.local;
 	}
 
 	server {
@@ -184,7 +184,7 @@ http {
 		ssl_ciphers HIGH:!aNULL:!MD5;
 		ssl_prefer_server_ciphers on;
 
-		return 301 http://stereopi.local;
+		return 301 http://third-i.local;
 	}
 }
 EOF
@@ -310,6 +310,9 @@ fi
 if ! [ -e /var/www/html/index.html ]; then
 	cp -fvR /tmp/pkg/third-i-frontend/* /var/www/html/
 fi
+
+# change hostname
+echo -n third-i > /etc/hostname
 
 sync
 reboot
