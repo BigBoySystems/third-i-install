@@ -114,6 +114,10 @@ perl -p -i -e 's!audio/x-raw,channels=1,depth=16,width=16,rate=44100!audio/x-raw
 perl -p -i -e 's!date \+%Y%m%d%-H%M%S!date \+%Y%m%d-%H%M%S!m' \
 	/opt/StereoPi/scripts/loop-record.sh
 
+# change timezone
+echo Europe/Brussels > /etc/timezone
+ln -sf /usr/share/zoneinfo/Europe/Brussels /etc/localtime
+
 # update nginx configuration
 cat - > /etc/nginx/nginx.conf <<EOF
 #user html;
