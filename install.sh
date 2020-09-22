@@ -109,7 +109,7 @@ perl -p -i -e 's!"Mic" 100!"Mic" "50%"!m' \
 	/opt/StereoPi/scripts/loop-record.sh
 perl -p -i -e 's!voaacenc bitrate=128000!voaacenc bitrate=320000!m' \
 	/opt/StereoPi/scripts/loop-record.sh
-perl -p -i -e 's!audio/x-raw,channels=1!audio/x-raw,channels=2!m' \
+perl -p -i -e 's!audio/x-raw,channels=1,depth=16,width=16,rate=44100!audio/x-raw,channels=2,depth=16,width=16,rate=48000!m' \
 	/opt/StereoPi/scripts/loop-record.sh
 perl -p -i -e 's!date \+%Y%m%d%-H%M%S!date \+%Y%m%d-%H%M%S!m' \
 	/opt/StereoPi/scripts/loop-record.sh
