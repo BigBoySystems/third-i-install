@@ -17,7 +17,7 @@ This script works on top of the provided StereoPi image.
 Run it using ssh:
 
 ```
-./install.sh root@stereopi.lan
+./install.sh root@stereopi.local
 ```
 
 Obtaining logs
