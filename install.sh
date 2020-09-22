@@ -104,6 +104,16 @@ perl -p -i -e 's!^(video_height)=.*!\$1=1080!m' /boot/stereopi.conf
 # re-activate journald logs
 perl -p -i -e 's!^#?(Storage)=.*!\$1=volatile!m' /etc/systemd/journald.conf
 
+# tweak recording
+perl -p -i -e 's!"Mic" 100!"Mic" "50%"!m' \
+	/opt/StereoPi/scripts/loop-record.sh
+perl -p -i -e 's!voaacenc bitrate=128000!voaacenc bitrate=320000!m' \
+	/opt/StereoPi/scripts/loop-record.sh
+perl -p -i -e 's!audio/x-raw,channels=1!audio/x-raw,channels=2!m' \
+	/opt/StereoPi/scripts/loop-record.sh
+perl -p -i -e 's!date \+%Y%m%d%-H%M%S!date \+%Y%m%d-%H%M%S!m' \
+	/opt/StereoPi/scripts/loop-record.sh
+
 # update nginx configuration
 cat - > /etc/nginx/nginx.conf <<EOF
 #user html;
