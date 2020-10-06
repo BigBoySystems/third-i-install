@@ -113,6 +113,8 @@ perl -p -i -e 's!audio/x-raw,channels=1,depth=16,width=16,rate=44100!audio/x-raw
 	/opt/StereoPi/scripts/loop-record.sh
 perl -p -i -e 's!date \+%Y%m%d%-H%M%S!date \+%Y%m%d-%H%M%S!m' \
 	/opt/StereoPi/scripts/loop-record.sh
+perl -p -i -e 's!record-!experience-!m' \
+	/opt/StereoPi/scripts/loop-record.sh
 
 # change timezone
 echo Europe/Brussels > /etc/timezone
