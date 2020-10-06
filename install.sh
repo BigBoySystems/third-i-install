@@ -115,6 +115,12 @@ perl -p -i -e 's!date \+%Y%m%d%-H%M%S!date \+%Y%m%d-%H%M%S!m' \
 	/opt/StereoPi/scripts/loop-record.sh
 perl -p -i -e 's!record-!experience-!m' \
 	/opt/StereoPi/scripts/loop-record.sh
+perl -p -i -e 's!echo "Recording with audio"!\$&;RECPATH=\\\$(date +"/media/DCIM/%Y/%m/%d");mkdir -p "\\\$RECPATH"!m' \
+	/opt/StereoPi/scripts/loop-record.sh
+
+# tweak photo shooting
+perl -p -i -e "s#'/media/DCIM/';#'/media/DCIM/'.date('Y').'/'.date('m').'/'.date('d').'/';shell_exec('mkdir -p '.\\\\\\\$path);#m" \
+	/var/www/html/make_photo.php
 
 # change timezone
 echo Europe/Brussels > /etc/timezone
