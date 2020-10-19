@@ -79,6 +79,7 @@ Type=forking
 PIDFile=/run/dhcpcd-%I.pid
 ExecStart=/usr/lib/dhcpcd5/dhcpcd -q -w %I
 ExecStop=/sbin/dhcpcd -x %I
+TimeoutSec=10
 
 [Install]
 WantedBy=multi-user.target
