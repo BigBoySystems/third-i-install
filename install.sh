@@ -116,7 +116,7 @@ perl -p -i -e 's!date \+%Y%m%d%-H%M%S!date \+%Y%m%d-%H%M%S!m' \
 	/opt/StereoPi/scripts/loop-record.sh
 perl -p -i -e 's!record-!experience-!m' \
 	/opt/StereoPi/scripts/loop-record.sh
-perl -p -i -e 's!echo "Recording with audio"!\$&;RECPATH=\\\$(date +"/media/DCIM/%Y/%m/%d");mkdir -p "\\\$RECPATH"!m' \
+perl -p -i -e 's!echo "Recording with audio"!\$&;RECPATH=\\\$(date +"/media/DCIM/%Y/%m/%d");mkdir -p "\\\$RECPATH";killall -9 arecord opusenc!m' \
 	/opt/StereoPi/scripts/loop-record.sh
 
 # tweak photo shooting
