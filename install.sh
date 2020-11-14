@@ -171,6 +171,14 @@ http {
 			root /var/www/html;
 		}
 
+		location /api/sound {
+			rewrite ^/api/(.*)$ /$1 break;
+			proxy_pass http://localhost:8000;
+			proxy_set_header Upgrade $http_upgrade;
+			proxy_set_header Connection "Upgrade";
+			proxy_set_header Host $host;
+		}
+
 		location /api {
 			rewrite ^/api/(.*)$ /\\\$1 break;
 			proxy_pass http://localhost:8000;
@@ -274,6 +282,13 @@ perl -p -i -e \
 
 # we need extra space
 mount -t tmpfs none /var/lib/apt/lists
+
+# install opus-tools
+if ! which pip3 &> /dev/null; then
+	apt-get update
+	apt-get install -y --no-install-recommends opus-tools
+	apt-get -q clean
+fi
 
 # install pip
 if ! which pip3 &> /dev/null; then
