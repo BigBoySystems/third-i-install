@@ -172,11 +172,11 @@ http {
 		}
 
 		location /api/sound {
-			rewrite ^/api/(.*)$ /$1 break;
+			rewrite ^/api/(.*)$ /\\\$1 break;
 			proxy_pass http://localhost:8000;
-			proxy_set_header Upgrade $http_upgrade;
+			proxy_set_header Upgrade \\\$http_upgrade;
 			proxy_set_header Connection "Upgrade";
-			proxy_set_header Host $host;
+			proxy_set_header Host \\\$host;
 		}
 
 		location /api {
